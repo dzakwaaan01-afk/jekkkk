@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>MoneyMate</title>
+  <style>
+    html, body { 
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Poppins', sans-serif; 
+      background: linear-gradient(135deg, #2f4156 0%, #1a2530 100%) no-repeat center center fixed; 
+      background-size: cover;  
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 20px 10px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: rgba(47, 65, 86, 0.95);
+      color: white;
+      text-align: center;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    header h1 { 
+      margin: 0; 
+      font-size: 42px; 
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      animation: fadeInDown 0.8s ease;
+    }
+    header p { 
+      margin: 8px 0 0; 
+      color: #dcdfe3; 
+      font-size: 18px;
+      animation: fadeInDown 0.8s ease 0.2s both;
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px;
+      box-sizing: border-box;
+      height: calc(100vh - 160px);
+      overflow: hidden;
+    }
+
+    .container { 
+      width: 100%;
+      text-align: center; 
+      animation: fadeIn 0.8s ease;
+      overflow: hidden;
+    }
+
+    .grid { 
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    .card-menu { 
+      background: white; 
+      border-radius: 16px; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      padding: 25px 30px; 
+      width: 250px;
+      height: 120px;
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+      text-decoration: none; 
+      color: black; 
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .card-menu::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .card-menu:hover::before {
+      left: 100%;
+    }
+
+    .card-menu:hover { 
+      transform: translateY(-5px) scale(1.03); 
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+    .card-menu h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .hidden { 
+      display: none; 
+    }
+
+    /* Halaman konten */
+    .content-page {
+      width: 100%;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 5px;
+    }
+
+    .content-page::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .content-page::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .content-page::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.2);
+      border-radius: 3px;
+    }
+
+    .content-page::-webkit-scrollbar-thumb:hover {
+      background: rgba(0,0,0,0.3);
+    }
+
+    .card { 
+      background: white; 
+      border-radius: 16px; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      padding: 25px; 
+      margin: 20px 0;
+      text-align: left; 
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      overflow: hidden;
+    }
+    
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .card h2 {
+      color: #2c3e50;
+      font-size: 24px;
+      margin-top: 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Styling untuk halaman finance */
+    .finance-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .finance-input-card {
+      text-align: center;
+    }
+    
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    
+    .input-group input, 
+    .input-group select {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    input, select, button { 
+      padding: 10px 14px; 
+      border-radius: 8px; 
+      border: 1px solid #ccc; 
+      margin: 5px; 
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #27ae60;
+      box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
+    }
+    
+    button { 
+      background: #27ae60; 
+      color: white; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+      min-width: 120px;
+      font-size: 14px;
+    }
+    
+    /* Tombol khusus untuk Simpan CSV */
+    .csv-btn {
+      background: #3498db;
+    }
+    
+    .csv-btn:hover {
+      background: #2980b9;
+    }
+    
+    button:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .result { 
+      background: #eafaf1; 
+      border-left: 5px solid #27ae60; 
+      padding: 15px; 
+      margin-top: 15px; 
+      border-radius: 0 8px 8px 0;
+      animation: slideInRight 0.5s ease;
+      overflow: hidden;
+    }
+    
+    .back-btn { 
+      margin: 20px auto; 
+      display: block; 
+      background: #34495e; 
+      padding: 12px 24px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background: #2c3e50;
+      transform: translateX(-5px);
+    }
+
+    /* Styling untuk ringkasan keuangan */
+    .finance-summary-card h3 {
+      text-align: center;
+      margin-top: 0;
+      color: #2c3e50;
+      font-size: 20px;
+    }
+    
+    #financeList {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+      max-height: 250px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #financeList::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #financeList::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #financeList::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.2);
+      border-radius: 2px;
+    }
+    
+    #financeList li {
+      padding: 12px 15px;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #27ae60;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+      font-size: 14px;
+    }
+    
+    #financeList li.out {
+      border-left-color: #e74c3c;
+    }
+    
+    /* Styling untuk ringkasan total */
+    .summary-totals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .total-box {
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .total-income {
+      background: #e8f5e8;
+      border: 2px solid #27ae60;
+      color: #27ae60;
+    }
+    
+    .total-expense {
+      background: #fde8e8;
+      border: 2px solid #e74c3c;
+      color: #e74c3c;
+    }
+    
+    .total-box .amount {
+      font-size: 18px;
+      margin-top: 5px;
+    }
+    
+    #balance {
+      text-align: center;
+      font-size: 18px;
+      padding: 15px;
+      background: #eafaf1;
+      border-radius: 8px;
+      margin: 0;
+      font-weight: 600;
+      border: 2px solid #3498db;
+    }
+
+    /* Split Bill Styles */
+    .split-section {
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .split-section h3 {
+      color: #2c3e50;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    #friendList, #itemList {
+      margin: 12px 0;
+      max-height: 150px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #friendList::-webkit-scrollbar,
+    #itemList::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #friendList::-webkit-scrollbar-track,
+    #itemList::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #friendList::-webkit-scrollbar-thumb,
+    #itemList::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.2);
+      border-radius: 2px;
+    }
+
+    #friendList li, #itemList div {
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 3px solid #3498db;
+      animation: fadeIn 0.5s ease;
+      font-size: 14px;
+    }
+
+    /* CLASS PETUNJUK PENGGUNAAN */
+    .guide-container {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #3498db;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .guide-title {
+      color: #2c3e50;
+      margin-top: 0;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .guide-title::before {
+      content: "📋";
+      font-size: 16px;
+    }
+    
+    .guide-step {
+      margin-bottom: 12px;
+      padding-left: 20px;
+      position: relative;
+      line-height: 1.5;
+    }
+    
+    .guide-step::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #3498db;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    .guide-step strong {
+      color: #2c3e50;
+    }
+    
+    .guide-note {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin-top: 15px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .guide-section {
+      margin-bottom: 20px;
+    }
+    
+    .guide-section h4 {
+      color: #34495e;
+      margin: 15px 0 10px 0;
+      font-size: 16px;
+      border-bottom: 1px solid #e9ecef;
+      padding-bottom: 5px;
+    }
+    
+    .guide-feature {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    
+    .guide-feature h5 {
+      margin: 0 0 8px 0;
+      color: #2c3e50;
+      font-size: 15px;
+    }
+
+    /* Animasi */
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .page-transition {
+      animation: pageFadeIn 0.5s ease;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @media (max-width: 768px){
+      .grid {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .card-menu {
+        width: 100%;
+        max-width: 280px;
+        height: 100px;
+      }
+      
+      .card {
+        padding: 20px;
+        margin: 15px 0;
+      }
+      
+      .input-group {
+        flex-direction: column;
+      }
+      
+      .input-group input, 
+      .input-group select {
+        min-width: 100%;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      button {
+        min-width: 100%;
+      }
+      
+      .summary-totals {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      header h1 {
+        font-size: 32px;
+      }
+      
+      header p {
+        font-size: 16px;
+      }
+
+      .main-container {
+        height: calc(100vh - 140px);
+        margin-top: 120px;
+      }
+      
+      .guide-container {
+        padding: 15px;
+      }
+    }
+
+    /* Keyframes */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes pageFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .count-up {
+      animation: countUp 1s ease-out;
+    }
+    
+    @keyframes countUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Notifikasi */
+    .notification {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      padding: 15px 20px;
+      background: #27ae60;
+      color: white;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1001;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.error {
+      background: #e74c3c;
+    }
+
+.team-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  text-align: center;
+  width: 100%;
+}
+
+.team-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-size: 22px;
+}
+
+.team-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.team-member {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+  margin: 0 auto;
+}
+
+.team-member:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+.member-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 15px;
+  border: 3px solid #3498db;
+  display: block;
+}
+
+.member-name {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.member-nim {
+  color: #7f8c8d;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.member-role {
+  background: #3498db;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: inline-block;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .team-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .team-member {
+    width: 90%;
+    max-width: 250px;
+    margin: 0 auto;
+  }
+}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MoneyMate</h1>
+    <p>Your Personal Financial Assistant</p>
+  </header>
+
+  <!-- Notifikasi -->
+  <div id="notification" class="notification"></div>
+
+  <div class="main-container">
+    <!-- Halaman Utama -->
+    <div class="container page-transition" id="home">
+      <div class="grid">
+        <div class="card-menu" onclick="showPage('split')">
+          <h3>🧾 Split Bill</h3>
+        </div>
+        <div class="card-menu" onclick="showPage('finance')">
+          <h3>💵 Pemasukan & Pengeluaran</h3>
+        </div>
+        <div class="card-menu" onclick="showPage('about')">
+          <h3>ℹ️ About</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Split Bill -->
+    <div id="page-split" class="hidden content-page">
+      <div class="card">
+        <h2>🧾 Split Bill</h2>
+        
+        <!-- Petunjuk Penggunaan Split Bill -->
+        <div class="guide-container">
+          <h3 class="guide-title">Petunjuk Penggunaan Split Bill</h3>
+          <div class="guide-step">
+            <strong>1. Tambah Teman:</strong> Masukkan nama teman dan klik "Tambah" untuk menambahkan ke daftar
+          </div>
+          <div class="guide-step">
+            <strong>2. Tambah Item Struk:</strong> Isi nama item, jumlah, dan harga per item, lalu klik "Tambah Item"
+          </div>
+          <div class="guide-step">
+            <strong>3. Tentukan Pembeli:</strong> Centang nama teman yang ikut membeli setiap item
+          </div>
+          <div class="guide-step">
+            <strong>4. Atur Pajak & Lainnya:</strong> Sesuaikan persentase pajak, service, dan diskon jika ada
+          </div>
+          <div class="guide-step">
+            <strong>5. Hitung:</strong> Klik "Hitung Split Bill" untuk melihat hasil pembagian
+          </div>
+          <div class="guide-note">
+            💡 <strong>Tips:</strong> Data akan tersimpan otomatis di perangkat Anda. Hapus teman atau item dengan klik tombol ❌
+          </div>
+        </div>
+        
+        <div class="split-section">
+          <h3>1. Tambah Teman</h3>
+          <input type="text" id="friendInput" placeholder="Nama teman" />
+          <button onclick="addFriend()">Tambah</button>
+          <ul id="friendList"></ul>
+        </div>
+        
+        <div class="split-section">
+          <h3>2. Tambah Item Struk</h3>
+          <input type="text" id="itemName" placeholder="Nama item" />
+          <input type="number" id="itemQty" placeholder="Jumlah" />
+          <input type="text" id="itemPrice" placeholder="Harga per item" oninput="formatInput(this)" />
+          <button onclick="addItem()">Tambah Item</button>
+          <div id="itemList"></div>
+        </div>
+        
+        <div class="split-section">
+          <h3>3. Pajak, Service & Diskon</h3>
+          Pajak (%) <input type="number" id="tax" value="10" /><br /><br />
+          Service (%) <input type="number" id="service" value="5" /><br /><br />
+          Diskon (%) <input type="number" id="discount" value="0" />
+        </div>
+        
+        <div class="split-section">
+          <button onclick="calculateSplit()">Hitung Split Bill</button>
+          <div id="result" class="result"></div>
+        </div>
+      </div>
+      <button class="back-btn" onclick="backHome()">⬅ Kembali ke Beranda</button>
+    </div>
+
+    <!-- Pemasukan & Pengeluaran -->
+    <div id="page-finance" class="hidden content-page">
+      <div class="finance-container">
+        <!-- Kartu Input di bagian atas -->
+        <div class="card finance-input-card">
+          <h2>💵 Catat Pemasukan & Pengeluaran</h2>
+          
+          <!-- Petunjuk Penggunaan Pemasukan & Pengeluaran -->
+          <div class="guide-container">
+            <h3 class="guide-title">Petunjuk Penggunaan</h3>
+            <div class="guide-step">
+              <strong>1. Isi Data:</strong> Masukkan tanggal, deskripsi, jumlah, dan pilih jenis (Pemasukan/Pengeluaran)
+            </div>
+            <div class="guide-step">
+              <strong>2. Tambah:</strong> Klik "Tambah" untuk menyimpan catatan keuangan
+            </div>
+            <div class="guide-step">
+              <strong>3. Lihat Ringkasan:</strong> Scroll ke bawah untuk melihat ringkasan keuangan Anda
+            </div>
+            <div class="guide-step">
+              <strong>4. Simpan Data:</strong> Gunakan "Simpan ke CSV" untuk menyimpan data ke file Excel
+            </div>
+            <div class="guide-step">
+              <strong>5. Hapus:</strong> Klik tombol ❌ untuk menghapus catatan yang tidak diperlukan
+            </div>
+            <div class="guide-note">
+              💡 <strong>Tips:</strong> Catat semua transaksi secara rutin untuk melacak kebiasaan keuangan Anda
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <input type="date" id="date" />
+            <input type="text" id="desc" placeholder="Deskripsi" />
+            <input type="text" id="amount" placeholder="Jumlah (Rp)" oninput="formatInput(this)" />
+            <select id="type">
+              <option value="in">Pemasukan</option>
+              <option value="out">Pengeluaran</option>
+            </select>
+          </div>
+          <div class="button-group">
+            <button onclick="addFinance()">Tambah</button>
+            <button onclick="downloadFinanceCSV()" class="csv-btn">💾 Simpan ke CSV</button>
+          </div>
+        </div>
+
+        <!-- Kartu Ringkasan di bawahnya -->
+        <div class="card finance-summary-card">
+          <h3>📊 Ringkasan Keuangan</h3>
+          
+          <!-- Ringkasan Total Pemasukan & Pengeluaran -->
+          <div class="summary-totals">
+            <div class="total-box total-income">
+              <div>Total Pemasukan</div>
+              <div class="amount" id="totalIncome">Rp0</div>
+            </div>
+            <div class="total-box total-expense">
+              <div>Total Pengeluaran</div>
+              <div class="amount" id="totalExpense">Rp0</div>
+            </div>
+          </div>
+          
+          <ul id="financeList"></ul>
+          <p id="balance"><b>Total Saldo:</b> Rp0</p>
+        </div>
+      </div>
+      <button class="back-btn" onclick="backHome()">⬅ Kembali ke Beranda</button>
+    </div>
+
+    <!-- About -->
+    <div id="page-about" class="hidden content-page">
+      <div class="card">
+        <h2>ℹ️ Tentang MoneyMate</h2>
+        <p style="text-align: justify; font-size: 15px; line-height: 1.6;">
+          MoneyMate adalah asisten keuangan sederhana yang dirancang untuk membantu kamu mengatur keuangan sehari-hari.  
+          Dengan fitur split bill, pencatatan pemasukan dan pengeluaran, hingga ringkasan saldo,  
+          MoneyMate hadir untuk membuat pengelolaan uang jadi lebih mudah, adil, dan transparan.  
+          Semua catatanmu tersimpan otomatis di perangkatmu agar tetap aman.
+        </p>
+        <!-- Bagian Profil Kelompok -->
+<div class="team-section">
+  <h3 class="team-title">👥 Kelompok 2</h3>
+  <div class="team-grid">
+    <div class="team-member">
+      <img src="./foto-anggota1.jpg" alt="Nama Anggota 1" class="member-photo">
+      <div class="member-name">A Muh Dzakwan Suparman</div>
+      <div class="member-nim">NIM: 230112502032</div>
+      <div class="member-role">Men</div>
+    </div>
+    <div class="team-member">
+      <img src="./foto-anggota2.jpg" alt="Nama Anggota 2" class="member-photo">
+      <div class="member-name">Meisya Anastasya</div>
+      <div class="member-nim">NIM: 230112500032</div>
+      <div class="member-role">Women</div>
+    </div>
+    <div class="team-member">
+      <img src="./foto-anggota3.jpg" alt="Nama Anggota 3" class="member-photo">
+      <div class="member-name">Nur Fadilla</div>
+      <div class="member-nim">NIM: 230112501008</div>
+      <div class="member-role">Women</div>
+    </div>
+    <div class="team-member">
+      <img src="./foto-anggota4.jpg" alt="Nama Anggota 4" class="member-photo">
+      <div class="member-name">Riby Fitrhriyyah Shalihati</div>
+      <div class="member-nim">NIM: 230112501024</div>
+      <div class="member-role">Women</div>
+    </div>
+  </div>
+</div>
+      </div>
+      <button class="back-btn" onclick="backHome()">⬅ Kembali ke Beranda</button>
+    </div>
+  </div>
+
+<script>
+  // Navigasi
+  function showPage(page){
+    ["home","page-split","page-finance","page-about"].forEach(id => {
+      document.getElementById(id).classList.add("hidden");
+    });
+    
+    document.getElementById(page === "home" ? "home" : "page-"+page).classList.remove("hidden");
+    
+    setTimeout(() => {
+      const cards = document.querySelectorAll(`#page-${page} .card`);
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.classList.add("visible");
+        }, index * 100);
+      });
+    }, 50);
+  }
+  
+  function backHome(){
+    const currentPage = document.querySelector('.content-page:not(.hidden)');
+    if (currentPage) {
+      const cards = currentPage.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.classList.remove("visible");
+      });
+    }
+    
+    setTimeout(() => {
+      ["page-split","page-finance","page-about"].forEach(id => {
+        document.getElementById(id).classList.add("hidden");
+      });
+      document.getElementById("home").classList.remove("hidden");
+    }, 300);
+  }
+
+  // Format angka
+  const formatRupiah = n => {
+    if(typeof n !== "number") n = Number(n) || 0;
+    return "Rp" + n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+  const formatInput = el => el.value = el.value.replace(/\D/g,"").replace(/\B(?=(\d{3})+(?!\d))/g,".");
+  const parseNumber = str => parseInt(str.replace(/\./g,"")) || 0;
+
+  // Notifikasi
+  function showNotification(message, isError = false) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification";
+    
+    if (isError) {
+      notification.classList.add("error");
+    }
+    
+    notification.classList.add("show");
+    
+    setTimeout(() => {
+      notification.classList.remove("show");
+    }, 3000);
+  }
+
+  // Split Bill
+  let friends = JSON.parse(localStorage.getItem("friendsData")) || [];
+  let items = JSON.parse(localStorage.getItem("itemsData")) || [];
+
+  function saveSplitData(){
+    localStorage.setItem("friendsData", JSON.stringify(friends));
+    localStorage.setItem("itemsData", JSON.stringify(items));
+  }
+
+  function addFriend(){
+    const name = document.getElementById("friendInput").value.trim();
+    if(!name){
+      showNotification("Nama teman tidak boleh kosong!", true);
+      return;
+    }
+    if(friends.includes(name)){
+      showNotification("Teman sudah ada!", true);
+      return;
+    }
+    friends.push(name);
+    document.getElementById("friendInput").value = "";
+    saveSplitData();
+    renderFriends();
+    renderItems();
+    showNotification(`Teman "${name}" berhasil ditambahkan!`);
+  }
+
+  const renderFriends = () => {
+    const friendList = document.getElementById("friendList");
+    friendList.innerHTML = friends.map(f => `<li class="fade-in">${f} <button onclick="removeFriend('${f}')" style="margin-left: 10px; padding: 4px 8px; font-size: 12px;">❌</button></li>`).join("");
+  };
+
+  function removeFriend(name) {
+    friends = friends.filter(f => f !== name);
+    items.forEach(item => {
+      item.buyers = item.buyers.filter(b => b !== name);
+    });
+    saveSplitData();
+    renderFriends();
+    renderItems();
+    showNotification(`Teman "${name}" berhasil dihapus!`);
+  }
+
+  function addItem(){
+    const name = document.getElementById("itemName").value.trim();
+    const qty = parseInt(document.getElementById("itemQty").value);
+    const price = parseNumber(document.getElementById("itemPrice").value);
+    if(!name || qty <= 0 || price <= 0){
+      showNotification("Isi data item dengan benar!", true);
+      return;
+    }
+    items.push({name, qty, price, buyers: []});
+    ["itemName","itemQty","itemPrice"].forEach(id => document.getElementById(id).value = "");
+    saveSplitData();
+    renderItems();
+    showNotification(`Item "${name}" berhasil ditambahkan!`);
+  }
+
+  function renderItems(){
+    const itemList = document.getElementById("itemList");
+    itemList.innerHTML = "";
+    items.forEach((item, i) => {
+      let checks = friends.map(f => 
+        `<label style="margin-right: 10px;"><input type="checkbox" onchange="toggleBuyer(${i},'${f}')" ${item.buyers.includes(f) ? "checked" : ""}> ${f}</label>`
+      ).join("");
+      itemList.innerHTML += `<div class="fade-in">${item.qty} x ${item.name} (${formatRupiah(item.price)})<br>Dibeli oleh: ${checks} <button onclick="removeItem(${i})" style="margin-left: 10px; padding: 4px 8px; font-size: 12px;">❌</button></div>`;
+    });
+  }
+
+  function removeItem(index) {
+    const itemName = items[index].name;
+    items.splice(index, 1);
+    saveSplitData();
+    renderItems();
+    showNotification(`Item "${itemName}" berhasil dihapus!`);
+  }
+
+  const toggleBuyer = (i, f) => {
+    let it = items[i];
+    if(it.buyers.includes(f)){
+      it.buyers = it.buyers.filter(x => x !== f);
+    } else {
+      it.buyers.push(f);
+    }
+    saveSplitData();
+  };
+
+  function calculateSplit(){
+    if(friends.length === 0){
+      showNotification("Tambahkan teman terlebih dahulu!", true);
+      return;
+    }
+    if(items.length === 0){
+      showNotification("Tambahkan item terlebih dahulu!", true);
+      return;
+    }
+    
+    const button = document.querySelector('#page-split button[onclick="calculateSplit()"]');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<span class="loading"></span> Menghitung...';
+    button.disabled = true;
+    
+    setTimeout(() => {
+      let subtotal = 0, bills = {};
+      friends.forEach(f => bills[f] = 0);
+      items.forEach(it => {
+        let total = it.qty * it.price;
+        subtotal += total;
+        if(it.buyers.length){
+          let share = total / it.buyers.length;
+          it.buyers.forEach(b => bills[b] += share);
+        }
+      });
+      const tax = (document.getElementById("tax").value / 100) * subtotal;
+      const service = (document.getElementById("service").value / 100) * subtotal;
+      const discount = (document.getElementById("discount").value / 100) * subtotal;
+      let total = subtotal + tax + service - discount;
+      let res = `<h3>💸 Hasil Split Bill</h3>Subtotal: ${formatRupiah(subtotal)}<br>Pajak: ${formatRupiah(tax)}, Service: ${formatRupiah(service)}, Diskon: ${formatRupiah(discount)}<br><b>Total: ${formatRupiah(total)}</b><br><br>`;
+      for(const [f, a] of Object.entries(bills)){
+        res += `${f}: ${formatRupiah(Math.round(a + (a / subtotal) * (tax + service - discount)))}<br>`;
+      }
+      document.getElementById("result").innerHTML = res;
+      
+      button.innerHTML = originalText;
+      button.disabled = false;
+      
+      showNotification("Perhitungan split bill berhasil!");
+    }, 1000);
+  }
+
+  renderFriends();
+  renderItems();
+
+  // Finance
+  let finance = JSON.parse(localStorage.getItem("financeData")) || [];
+  
+  function addFinance(){
+    const date = document.getElementById("date").value;
+    const desc = document.getElementById("desc").value.trim();
+    const amount = parseNumber(document.getElementById("amount").value);
+    const type = document.getElementById("type").value;
+    if(!date || !desc || !amount){
+      showNotification("Isi semua data!", true);
+      return;
+    }
+    finance.push({date, desc, amount, type});
+    localStorage.setItem("financeData", JSON.stringify(finance));
+    ["date","desc","amount"].forEach(id => document.getElementById(id).value = "");
+    renderFinance();
+    showNotification(`${type === "in" ? "Pemasukan" : "Pengeluaran"} berhasil ditambahkan!`);
+  }
+  
+  function renderFinance(){
+    const list = document.getElementById("financeList");
+    list.innerHTML = "";
+    
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let balance = 0;
+    
+    finance.forEach((f, i) => {
+      if(f.type === "in") {
+        totalIncome += f.amount;
+        balance += f.amount;
+      } else {
+        totalExpense += f.amount;
+        balance -= f.amount;
+      }
+      
+      const listItem = document.createElement('li');
+      listItem.className = f.type === "in" ? "fade-in" : "fade-in out";
+      listItem.innerHTML = `${f.date} - ${f.desc}: <span style="color: ${f.type === "in" ? '#27ae60' : '#e74c3c'}; font-weight: 600;">${f.type === "in" ? "+" : "-"}${formatRupiah(f.amount)}</span> <button onclick="deleteFinance(${i})" style="padding: 4px 8px; font-size: 12px;">❌</button>`;
+      list.appendChild(listItem);
+    });
+    
+    // Update total pemasukan dan pengeluaran
+    document.getElementById("totalIncome").textContent = formatRupiah(totalIncome);
+    document.getElementById("totalExpense").textContent = formatRupiah(totalExpense);
+    
+    // Animasi perubahan saldo
+    const balanceElement = document.getElementById("balance");
+    balanceElement.classList.remove("count-up");
+    void balanceElement.offsetWidth;
+    balanceElement.classList.add("count-up");
+    
+    document.getElementById("balance").innerHTML = `<b>Total Saldo:</b> ${formatRupiah(balance)}`;
+  }
+  
+  const deleteFinance = i => {
+    const item = finance[i];
+    finance.splice(i, 1);
+    localStorage.setItem("financeData", JSON.stringify(finance));
+    renderFinance();
+    showNotification(`${item.type === "in" ? "Pemasukan" : "Pengeluaran"} berhasil dihapus!`);
+  }
+
+  function downloadFinanceCSV(){
+    if(finance.length === 0){
+      showNotification("Belum ada data!", true);
+      return;
+    }
+    
+    // Tampilkan animasi loading
+    const button = document.querySelector('#page-finance button[onclick="downloadFinanceCSV()"]');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<span class="loading"></span> Menyimpan...';
+    button.disabled = true;
+    
+    setTimeout(() => {
+      let totalIncome = finance.reduce((acc, f) => f.type === "in" ? acc + f.amount : acc, 0);
+      let totalExpense = finance.reduce((acc, f) => f.type === "out" ? acc + f.amount : acc, 0);
+      let balance = totalIncome - totalExpense;
+
+      const header = ["Tanggal", "Deskripsi", "Jumlah", "Jenis"];
+      const rows = finance.map(f => [
+        f.date,
+        `"${f.desc.replace(/"/g,'""')}"`,
+        f.amount,
+        f.type === "in" ? "Pemasukan" : "Pengeluaran"
+      ].join(","));
+
+      // Tambahkan baris ringkasan
+      rows.push("");
+      rows.push("RINGKASAN");
+      rows.push(`Total Pemasukan,${totalIncome}`);
+      rows.push(`Total Pengeluaran,${totalExpense}`);
+      rows.push(`Total Saldo,${balance}`);
+
+      const csvContent = [header.join(","), ...rows].join("\n");
+      const blob = new Blob([csvContent], {type: "text/csv;charset=utf-8;"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `finance-data-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      // Kembalikan tombol ke keadaan semula
+      button.innerHTML = originalText;
+      button.disabled = false;
+      
+      showNotification("Data berhasil disimpan ke CSV!");
+    }, 1000);
+  }
+
+  renderFinance();
+</script>
+</body>
+</html>
